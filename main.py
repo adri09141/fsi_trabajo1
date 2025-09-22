@@ -1,2 +1,2 @@
 print("hola")
-print("Tú eres tonto?")
+print("adios")
