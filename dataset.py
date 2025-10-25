@@ -5,9 +5,9 @@ from torch.utils.data import DataLoader, Subset
 # --- Parámetros ---
 data_dir = "asl_alphabet_train"
 batch_size = 64
-img_size = (64, 64)
+img_size = (128, 128)
 val_split = 0.2
-use_subset = False
+use_subset = True
 subset_size = 20000
 seed = 42
 
@@ -16,9 +16,9 @@ random.seed(seed)
 # --- Transforms ---
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
-    transforms.RandomHorizontalFlip(),
-    transforms.RandomRotation(10),
-    transforms.ColorJitter(brightness=0.2, contrast=0.2),
+    transforms.RandomHorizontalFlip(p=0.3),
+    transforms.RandomRotation(5),
+    transforms.ColorJitter(brightness=0.1, contrast=0.1),
     transforms.ToTensor(),
     transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))
 ])
@@ -58,8 +58,8 @@ def n_classes():
     return len(base.classes)
 
 if __name__ == '__main__':
-    # print(f"Total imágenes cargadas: {len(base)}")
-    # print(f"Entrenamiento: {len(train_dataset)}")
-    # print(f"Validación: {len(val_dataset)}")
-    # print(f"Clases: {n_classes()}")
-    pass  # ← opcional, solo para dejar claro que no hace nada
+    print(f"Total imágenes cargadas: {len(base)}")
+    print(f"Entrenamiento: {len(train_dataset)}")
+    print(f"Validación: {len(val_dataset)}")
+    print(f"Clases: {n_classes()}")
+    #pass  # ← opcional, solo para dejar claro que no hace nada
