@@ -1,7 +1,8 @@
+
 import torch
 import torch.nn.functional as F
 # --- ¡Importante! Importar desde tus otros archivos ---
-from dataset import train_loader, val_loader, n_classes
+from dataset import train_loader, val_loader, n_classes, test_loader
 from model import model, criterion, optimizer # Importa el modelo, criterio y optimizador instanciados
 from showGraph import plot_training_history
 
@@ -117,7 +118,7 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
 
 # --- ¡Aquí es donde inicias el entrenamiento! ---
 if __name__ == '__main__':
-    num_epochs_to_train = 30
+    num_epochs_to_train = 10
     trained_model, training_history = train_with_validation(
         model=model,
         train_loader=train_loader,
@@ -131,3 +132,6 @@ if __name__ == '__main__':
     print("Guardando el modelo entrenado...")
     torch.save(trained_model.state_dict(), 'asl_cnn_final.pth')
     print("Modelo guardado en 'asl_cnn_final.pth'")
+
+    test_accuracy = evaluate(trained_model, test_loader)  # aquí sí usamos test_loader
+    print(f'Accuracy final en test: {test_accuracy:.2f}%')
