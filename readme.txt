@@ -13,4 +13,3 @@ A continuación, abre el fichero train.py y ajusta la variable NUM_EPOCHS_TO_TRA
 
 Una vez configurado esto, ejecuta el script y verás cómo la red neuronal empieza a aprender.
 
-***  CUIDADO POR AHORA ESTA MAL DA BUENOS RESULTADOS DEBIDO A QUE UTILIZO LA MISMA CARPETA PARA LOS TEST Y PARA ENSEÑARLE ***
