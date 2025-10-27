@@ -127,3 +127,7 @@ if __name__ == '__main__':
         epochs=num_epochs_to_train
     )
     plot_training_history(training_history)
+    # Cuidado no esta termino porque podria ser que la epoca 25 sea la mejor y la 30 no (ESTO GUARDARIA LA ULTIMA EPOCA)
+    print("Guardando el modelo entrenado...")
+    torch.save(trained_model.state_dict(), 'asl_cnn_final.pth')
+    print("Modelo guardado en 'asl_cnn_final.pth'")
