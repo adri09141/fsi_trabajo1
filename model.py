@@ -15,26 +15,25 @@ class SimpleCNN(nn.Module):
 
         # 🔹 Capa 1: Conv -> BatchNorm -> ReLU -> Pool
         # Entrada: [B, 3, 128, 128]  →  Salida: [B, 16, 64, 64]
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, padding=1)
+        self.conv1 = nn.LazyConv2d(out_channels=16, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(16)
 
         # 🔹 Capa 2: Conv -> BatchNorm -> ReLU -> Pool
         # Entrada: [B, 16, 64, 64]  →  Salida: [B, 32, 32, 32]
-        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1)
+        self.conv2 = nn.LazyConv2d(out_channels=32, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(32)
 
         # 🔹 Capa 3: Conv -> BatchNorm -> ReLU -> Pool
         # Entrada: [B, 32, 32, 32]  →  Salida: [B, 64, 16, 16]
-        self.conv3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1)
+        self.conv3 = nn.LazyConv2d(out_channels=64, kernel_size=3, padding=1)
         self.bn3 = nn.BatchNorm2d(64)
 
         # 🔹 Capa totalmente conectada (clasificación)
         # Aplanamos: [B, 64, 8, 8] → [B, 64*16*16 = 16384]
-        self.fc1 = nn.Linear(64 * 16 * 16, 1024)
+        self.fc1 = nn.LazyLinear(out_features=1024)
         self.bn_fc1 = nn.BatchNorm1d(1024)
         self.fc2 = nn.Linear(1024, 256)
         self.bn_fc2 = nn.BatchNorm1d(256)
-        self.dropout = nn.Dropout(0.4)
         self.fc3 = nn.Linear(256, num_classes)
 
     def forward(self, x):
@@ -58,7 +57,7 @@ class SimpleCNN(nn.Module):
 
         # ---- Clasificador ----
         x = torch.flatten(x, 1)        # [B, 64, 16, 16] → [B, 4096]
-        x = self.dropout(self.relu(self.fc1(x)))   # [B, 4096] → [B, 256]
+        x = self.dropout(self.relu(self.bn_fc1(self.fc1(x))))   # [B, 4096] → [B, 256]
         x = self.dropout(self.relu(self.bn_fc2(self.fc2(x))))
         x = self.fc3(x) # [B, 256] → [B, num_classes]
         return x
