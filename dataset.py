@@ -10,8 +10,8 @@ img_size = (128, 128)
 val_split = 0.2
 # NOTA: use_subset=True y subset_size=10000 significa que solo usas 10k imágenes
 # del set de train. Si quieres usarlo todo, pon use_subset=False
-use_subset = True 
-subset_size = 10000
+use_subset = False 
+subset_size = 20000
 seed = 42
 
 random.seed(seed)
@@ -20,7 +20,7 @@ random.seed(seed)
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
     transforms.RandomHorizontalFlip(p=0.3),
-    transforms.RandomRotation(5),
+    transforms.RandomRotation(15),
     transforms.ColorJitter(brightness=0.1, contrast=0.1),
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
