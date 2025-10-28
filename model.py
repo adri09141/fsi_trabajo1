@@ -1,3 +1,4 @@
+
 from dataset import *
 import torch
 import torch.nn as nn
@@ -11,7 +12,7 @@ class SimpleCNN(nn.Module):
         super(SimpleCNN, self).__init__()
         self.relu = nn.ReLU()                      # Función de activación no lineal
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)  # Reduce a la mitad alto/ancho
-        self.dropout = nn.Dropout(0.4)             # Evita sobreajuste
+        self.dropout = nn.Dropout(0.5)             # Evita sobreajuste
 
         # 🔹 Capa 1: Conv -> BatchNorm -> ReLU -> Pool
         # Entrada: [B, 3, 128, 128]  →  Salida: [B, 16, 64, 64]
@@ -65,6 +66,6 @@ class SimpleCNN(nn.Module):
 # --- Instanciación ---
 model = SimpleCNN(num_classes=num_classes)
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
 if __name__ == '__main__':
     print(f"\n Modelo CNN con {num_classes} clases listo para entrenar.")
