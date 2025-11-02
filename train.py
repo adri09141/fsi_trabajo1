@@ -118,7 +118,8 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
 
 # --- ¡Aquí es donde inicias el entrenamiento! ---
 if __name__ == '__main__':
-    num_epochs_to_train = 30
+    num_epochs_to_train = 20
+    print(f'\n--- Época {0}/{num_epochs_to_train} Finalizada ---')
     trained_model, training_history = train_with_validation(
         model=model,
         train_loader=train_loader,
@@ -135,4 +136,3 @@ if __name__ == '__main__':
 
     test_accuracy = evaluate(trained_model, test_loader)  # aquí sí usamos test_loader
     print(f'Accuracy final en test: {test_accuracy:.2f}%')
-    
