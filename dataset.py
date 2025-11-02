@@ -19,8 +19,9 @@ random.seed(seed)
 # --- Transforms ---
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
-    transforms.RandomHorizontalFlip(p=0.3),
-    transforms.RandomRotation(15),
+    transforms.RandomHorizontalFlip(p=0.1),
+    transforms.RandomVerticalFlip(p=0.1),
+    transforms.RandomRotation(5),
     transforms.ColorJitter(brightness=0.1, contrast=0.1),
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
