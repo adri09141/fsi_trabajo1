@@ -19,10 +19,14 @@ random.seed(seed)
 # --- Transforms ---
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
-    transforms.RandomHorizontalFlip(p=0.1),
-    transforms.RandomVerticalFlip(p=0.1),
-    transforms.RandomRotation(5),
-    transforms.ColorJitter(brightness=0.1, contrast=0.1),
+    transforms.RandomAffine(
+        degrees=0,           # La rotación ya se hizo arriba
+        translate=(0.05, 0.05), # Mueve la imagen 5% (simula movimiento)
+        scale=(0.95, 1.05),  # Zoom de 95% a 105% (simula cercanía)
+        shear=5              # Inclina la imagen 5 grados
+    ),
+    transforms.RandomRotation(10),
+    transforms.ColorJitter(brightness=0.05, contrast=0.05),
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
@@ -44,14 +48,11 @@ train_base_dataset = datasets.ImageFolder(root=train_dir, transform=train_transf
 val_base_dataset = datasets.ImageFolder(root=train_dir, transform=val_transform)
 test_dataset = datasets.ImageFolder(root=test_dir, transform=test_transform)
 
-_base_info_source = val_base_dataset
-# --- ¡AÑADIR ESTO! ---
-# Exportamos los nombres de las clases (A, B, C...)
-class_names = _base_info_source.classes
-# --- FIN DE LA ADICIÓN ---
+base_info = val_base_dataset
+class_names = base_info.classes
 
 # --- Subconjunto opcional (sobre el set de training) ---
-indices = list(range(len(_base_info_source)))
+indices = list(range(len(base_info)))
 if use_subset and subset_size < len(indices):
     indices = random.sample(indices, subset_size)
 
@@ -71,15 +72,16 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num
 
 # --- Información ---
 def n_classes():
-    return len(_base_info_source.classes)
+    return len(base_info.classes)
 
 if __name__ == '__main__':
+    num_classes = n_classes()
     if use_subset:
         print(f"Usando un subconjunto de {subset_size}")
         print(f"Subconjunto Entrenamiento: {len(train_dataset)}")
         print(f"Subconjunto Validación: {len(val_dataset)}")
     else:
-        print(f"Total imágenes de entrenamiento+validación (base): {len(_base_info_source)}")
+        print(f"Total imágenes de entrenamiento+validación (base): {num_classes}")
     print(f"Total imágenes de Test: {len(test_dataset)}")
     print(f"Clases: {n_classes()}")
     print(f"Nombres de clases: {class_names}")
