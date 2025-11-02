@@ -1,3 +1,4 @@
+
 from dataset import *
 import torch
 import torch.nn as nn
@@ -65,6 +66,6 @@ class SimpleCNN(nn.Module):
 # --- Instanciación ---
 model = SimpleCNN(num_classes=num_classes)
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.003, weight_decay=1e-4)
+optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
 if __name__ == '__main__':
     print(f"\n Modelo CNN con {num_classes} clases listo para entrenar.")
