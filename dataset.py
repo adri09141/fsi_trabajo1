@@ -1,4 +1,5 @@
 import random
+import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Subset
 
@@ -8,22 +9,19 @@ test_dir = "asl_alphabet_test"
 batch_size = 64
 img_size = (128, 128)
 val_split = 0.2
-# NOTA: use_subset=True y subset_size=10000 significa que solo usas 10k imágenes
-# del set de train. Si quieres usarlo todo, pon use_subset=False
-use_subset = False 
-subset_size = 20000
 seed = 42
 
 random.seed(seed)
+torch.manual_seed(seed)
 
 # --- Transforms ---
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
     transforms.RandomAffine(
-        degrees=0,           # La rotación ya se hizo arriba
-        translate=(0.05, 0.05), # Mueve la imagen 5% (simula movimiento)
-        scale=(0.95, 1.05),  # Zoom de 95% a 105% (simula cercanía)
-        shear=5              # Inclina la imagen 5 grados
+        degrees=0,
+        translate=(0.05, 0.05),
+        scale=(0.95, 1.05),
+        shear=5
     ),
     transforms.RandomRotation(10),
     transforms.ColorJitter(brightness=0.05, contrast=0.05),
@@ -51,12 +49,8 @@ test_dataset = datasets.ImageFolder(root=test_dir, transform=test_transform)
 base_info = val_base_dataset
 class_names = base_info.classes
 
-# --- Subconjunto opcional (sobre el set de training) ---
+# --- Split entrenamiento/validación ---
 indices = list(range(len(base_info)))
-if use_subset and subset_size < len(indices):
-    indices = random.sample(indices, subset_size)
-
-# --- Split entrenamiento/validación (sobre el set de training) ---
 random.shuffle(indices)
 n_val = int(len(indices) * val_split)
 val_indices = indices[:n_val]
@@ -76,12 +70,8 @@ def n_classes():
 
 if __name__ == '__main__':
     num_classes = n_classes()
-    if use_subset:
-        print(f"Usando un subconjunto de {subset_size}")
-        print(f"Subconjunto Entrenamiento: {len(train_dataset)}")
-        print(f"Subconjunto Validación: {len(val_dataset)}")
-    else:
-        print(f"Total imágenes de entrenamiento+validación (base): {num_classes}")
-    print(f"Total imágenes de Test: {len(test_dataset)}")
-    print(f"Clases: {n_classes()}")
+    print(f"Total imágenes de entrenamiento: {len(train_dataset)}")
+    print(f"Total imágenes de validación: {len(val_dataset)}")
+    print(f"Total imágenes de test: {len(test_dataset)}")
+    print(f"Número de clases: {num_classes}")
     print(f"Nombres de clases: {class_names}")
