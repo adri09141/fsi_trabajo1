@@ -14,7 +14,6 @@ def evaluate(model, test_loader):
     model.eval()  # Se pone el modelo en modo evaluación (desactiva dropout y batchnorm)
     correct = 0
     total = 0
-
     with torch.no_grad():  # No necesitamos calcular gradientes al evaluar
         for inputs, labels in test_loader:
             inputs, labels = inputs.to(device), labels.to(device)
@@ -144,5 +143,6 @@ if __name__ == '__main__':
     print("Modelo guardado en 'asl_cnn_final.pth'")
 
     # Evaluamos en el conjunto de test para ver el rendimiento final
+    torch.cuda.empty_cache()
     test_accuracy = evaluate(trained_model, test_loader)
     print(f'Accuracy final en test: {test_accuracy:.2f}%')
