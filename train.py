@@ -121,9 +121,9 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         scheduler.step(avg_dev_loss)
 
         # (Opcional) Mostrar el LR actual
-        current_lr =scheduler.get_last_lr()[0]
-        print(f"Learning rate actual: {current_lr:.6f}\n")
-
+        current_lr = optimizer.param_groups[0]['lr']
+        print(f"Learning rate actual: {current_lr:.6f}")
+        print(f"Épocas sin mejora (num_bad_epochs): {scheduler.num_bad_epochs}\n")
 
     print('--- Entrenamiento finalizado ---')
     return model, history
@@ -133,7 +133,7 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
 # Bloque principal — aquí arranca todo
 # -------------------------------------------------------------------
 if __name__ == '__main__':
-    num_epochs_to_train = 5
+    num_epochs_to_train = 20
     print(f'\n--- Iniciando entrenamiento por {num_epochs_to_train} épocas ---')
 
     trained_model, training_history = train_with_validation(
