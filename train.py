@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from dataset import train_loader, val_loader, n_classes, test_loader
 from model import model, criterion, optimizer  # Traemos el modelo, la función de pérdida y el optimizador ya definidos
 from showGraph import plot_training_history
-
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 # -------------------------------------------------------------------
 # Función para evaluar el modelo en un conjunto de datos (por ejemplo, test o validación)
@@ -36,6 +36,13 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
     y evalúa su desempeño en validación al final de cada una.
     Devuelve el modelo entrenado y un registro de las métricas.
     """
+    scheduler = ReduceLROnPlateau(
+        optimizer,
+        mode='min',       # Queremos minimizar la pérdida
+        factor=0.5,       # Reduce el LR a la mitad
+        patience=2,       # Espera 2 épocas sin mejora
+        verbose=True
+    )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Entrenando en dispositivo: {device}")
     model.to(device)
@@ -112,6 +119,12 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         print(f'\n--- Época {epoch + 1}/{epochs} completada ---')
         print(f'Pérdida Entrenamiento : {avg_train_loss:.4f} | Exactitud Entrenamiento : {train_acc:.2f}%')
         print(f'Pérdida Validación    : {avg_dev_loss:.4f} | Exactitud Validación    : {dev_acc:.2f}%\n')
+        scheduler.step(avg_dev_loss)
+
+        # (Opcional) Mostrar el LR actual
+        current_lr =scheduler.get_last_lr()[0]
+        print(f"Learning rate actual: {current_lr:.6f}\n")
+
 
     print('--- Entrenamiento finalizado ---')
     return model, history
@@ -121,7 +134,7 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
 # Bloque principal — aquí arranca todo
 # -------------------------------------------------------------------
 if __name__ == '__main__':
-    num_epochs_to_train = 20
+    num_epochs_to_train = 5
     print(f'\n--- Iniciando entrenamiento por {num_epochs_to_train} épocas ---')
 
     trained_model, training_history = train_with_validation(
