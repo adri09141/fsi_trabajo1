@@ -5,7 +5,7 @@ from dataset import train_loader, val_loader, n_classes, test_loader
 from model import model, criterion, optimizer  # Traemos el modelo, la función de pérdida y el optimizador ya definidos
 from showGraph import plot_training_history
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-
+import time
 # -------------------------------------------------------------------
 # Función para evaluar el modelo en un conjunto de datos (por ejemplo, test o validación)
 # -------------------------------------------------------------------
@@ -55,8 +55,10 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
     }
 
     num_classes = n_classes()  # Obtenemos la cantidad de clases
-
+    epoch_times = []
+    total_start_time = time.time()
     for epoch in range(epochs):
+        start_time = time.time()
         model.train()  # Modo entrenamiento
         running_loss = 0.0
         correct_train = 0
@@ -113,12 +115,17 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         history['train_acc'].append(train_acc)
         history['dev_loss'].append(avg_dev_loss)
         history['dev_acc'].append(dev_acc)
+        epoch_time = time.time() - start_time
+        epoch_times.append(epoch_time)
+        mins, secs = divmod(epoch_time, 60)
 
         # Mostramos resumen de la época
         print(f'\n--- Época {epoch + 1}/{epochs} completada ---')
         print(f'Pérdida Entrenamiento : {avg_train_loss:.4f} | Exactitud Entrenamiento : {train_acc:.2f}%')
         print(f'Pérdida Validación    : {avg_dev_loss:.4f} | Exactitud Validación    : {dev_acc:.2f}%\n')
+        print(f'Tiempo por época      : {int(mins)}m {int(secs)}s%\n')
         scheduler.step(avg_dev_loss)
+        torch.cuda.empty_cache() # No se si es necesario aquí
 
         # (Opcional) Mostrar el LR actual
         current_lr = optimizer.param_groups[0]['lr']
@@ -126,6 +133,15 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         print(f"Épocas sin mejora (num_bad_epochs): {scheduler.num_bad_epochs}\n")
 
     print('--- Entrenamiento finalizado ---')
+    total_time = time.time() - total_start_time
+    avg_epoch_time = sum(epoch_times) / len(epoch_times)
+    total_mins, total_secs = divmod(total_time, 60)
+    avg_mins, avg_secs = divmod(avg_epoch_time, 60)
+
+    print("\n--- Entrenamiento finalizado ---")
+    print(f"Tiempo total de entrenamiento : {int(total_mins)}m {int(total_secs)}s")
+    print(f"Tiempo promedio por época     : {int(avg_mins)}m {int(avg_secs)}s")
+
     return model, history
 
 
@@ -133,7 +149,7 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
 # Bloque principal — aquí arranca todo
 # -------------------------------------------------------------------
 if __name__ == '__main__':
-    num_epochs_to_train = 20
+    num_epochs_to_train = 20  # Definí cuántas épocas querés entrenar
     print(f'\n--- Iniciando entrenamiento por {num_epochs_to_train} épocas ---')
 
     trained_model, training_history = train_with_validation(
