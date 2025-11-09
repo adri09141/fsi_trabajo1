@@ -2,7 +2,7 @@ import random
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Subset
-
+import os
 # --- Parámetros ---
 train_dir = "asl_alphabet_train"
 test_dir = "asl_alphabet_test"
@@ -17,17 +17,19 @@ torch.manual_seed(seed)
 # --- Transforms ---
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
-    transforms.RandomAffine(
-        degrees=0,
-        translate=(0.05, 0.05),
-        scale=(0.95, 1.05),
-        shear=5
+    transforms.RandomCrop(img_size, padding=8),  # más barato que RandomResizedCrop
+    transforms.RandomHorizontalFlip(p=0.5),
+    transforms.RandomRotation(10),               # reemplaza RandomAffine
+    transforms.ColorJitter(
+        brightness=0.1,
+        contrast=0.1,
+        saturation=0.05
     ),
-    transforms.RandomRotation(10),
-    transforms.ColorJitter(brightness=0.05, contrast=0.05),
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
+
+
 
 val_transform = transforms.Compose([
     transforms.Resize(img_size),
@@ -59,8 +61,9 @@ train_indices = indices[n_val:]
 train_dataset = Subset(train_base_dataset, train_indices)
 val_dataset = Subset(val_base_dataset, val_indices)
 
+total_cpus = os.cpu_count()
 # --- DataLoaders ---
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=total_cpus, pin_memory=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
@@ -75,3 +78,4 @@ if __name__ == '__main__':
     print(f"Total imágenes de test: {len(test_dataset)}")
     print(f"Número de clases: {num_classes}")
     print(f"Nombres de clases: {class_names}")
+    print(f"Usando {total_cpus} CPUs para cargar datos.")
