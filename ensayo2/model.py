@@ -63,7 +63,7 @@ class SimpleCNN(nn.Module):
 
 # --- Instanciación ---
 model = SimpleCNN(num_classes=num_classes)
-criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
 optimizer = optim.AdamW(model.parameters(), lr=0.003, weight_decay=1e-4)
 if __name__ == '__main__':
     print(f"\n Modelo CNN con {num_classes} clases listo para entrenar.")
