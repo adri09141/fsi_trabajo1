@@ -63,7 +63,7 @@ val_dataset = Subset(val_base_dataset, val_indices)
 
 total_cpus = os.cpu_count()
 # --- DataLoaders ---
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=total_cpus, pin_memory=True)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
