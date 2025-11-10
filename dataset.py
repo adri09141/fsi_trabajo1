@@ -7,8 +7,8 @@ import os
 train_dir = "asl_alphabet_train"
 test_dir = "asl_alphabet_test"
 batch_size = 128
-img_size = (94, 94)
-val_split = 0.2
+img_size = (128, 128)
+val_split = 0.25
 seed = 42
 
 random.seed(seed)
