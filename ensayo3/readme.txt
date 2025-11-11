@@ -1,40 +1,55 @@
 🧪 Comparativa principal entre Ensayo 1 y Ensayo 3
 
-En este segundo ensayo se realizaron ajustes estructurales y de optimización con el objetivo de simplificar la red, mejorar la estabilidad del entrenamiento y 
-reducir el número total de parámetros, manteniendo un buen poder de representación para la clasificación de letras en lenguaje de signos.
+En este tercer ensayo se realizaron ajustes estructurales, funcionales y de activación con el objetivo de ligerizar el modelo, mejorar la estabilidad del aprendizaje y mantener la capacidad de representación necesaria para la detección precisa de letras en lenguaje de signos.
 
 🔹 1. Arquitectura general
 
-- Antes (Ensayo 1)
-
+- Antes (Ensayo 1):
   Red convolucional con tres bloques Conv–BatchNorm–ReLU–Pool y un clasificador totalmente conectado con tres capas densas (fc1, fc2, fc3).
 
-- Ahora (Ensayo 3)
-
-  Se amplió la parte convolucional a cuatro bloques (mayor profundidad), pero se eliminó el clasificador denso y se reemplazó por una 
-  combinación de Global Average Pooling (GAP) seguido de una sola capa Linear.
+- Ahora (Ensayo 3):
+  Se amplió la parte convolucional a cuatro bloques (16 → 32 → 32 → 64) para una extracción de características más jerárquica, y se eliminó el clasificador denso en   favor de una etapa de Global Average Pooling (GAP) seguida de una sola capa lineal.
 
 Justificación:
-El uso de nn.AdaptiveAvgPool2d((1, 1)) permite condensar la información espacial de cada canal sin necesidad de aplanar todo el tensor, reduciendo así millones de parámetros de las capas densas.
-Esto da como resultado un modelo:
-- Más compacto
-- Más rápido de entrenar
-- Con menor riesgo de sobreajuste
+El uso de nn.AdaptiveAvgPool2d((1, 1)) permite condensar la información espacial sin necesidad de aplanar todo el tensor, reduciendo millones de parámetros y mejorando la eficiencia computacional.
+Esto hace que el modelo sea:
+- Más compacto y rápido de entrenar
+- Menos propenso al sobreajuste
+- Más generalizable en validación
 
 🔹 2. Capacidad convolucional
 
 - Antes:
-
-  Último bloque con 64 canales tras tres convoluciones (conv1–conv3).
+  Tres capas convolucionales (16 → 32 → 64) seguidas de capas densas con más de 1 millón de parámetros.
 
 - Ahora:
-
-  Se añadió una cuarta capa convolucional (conv4) para llegar también a 64 canales, pero distribuyendo mejor la extracción de características (8 → 16 → 32 → 64).
+  Cuatro capas convolucionales (16 → 32 → 32 → 64), todas normalizadas con BatchNorm2d y activadas con Mish.
 
 Beneficio:
-Este escalado progresivo permite una mejor jerarquía de representación visual y aprovecha mejor la profundidad de la red antes del pooling global.
+Este patrón progresivo permite extraer características visuales más ricas sin recurrir a capas densas costosas.
+La repetición de dos bloques con 32 canales estabiliza el flujo de gradiente y mejora la sensibilidad a variaciones sutiles en las formas de las manos.
 
-🔹 3. Clasificador final
+🔹 3. Función de activación
+
+- Antes (Ensayo 1): nn.ReLU()
+
+- Ahora (Ensayo 3): nn.Mish()
+
+Justificación:
+Mish es una activación más suave y continua que ReLU, definida como x * tanh(softplus(x)).
+Proporciona una mejor propagación de gradientes en valores negativos, facilitando una convergencia más estable y mejor precisión final, especialmente en tareas visuales complejas como la interpretación de gestos o letras manuales.
+
+🔹 4. Regularización
+
+- Antes: nn.Dropout(0.3)
+
+- Ahora: nn.Dropout(0.15)
+
+Justificación:
+La reducción del dropout rate es coherente con la simplificación del modelo.
+Con menos capas densas, el riesgo de sobreajuste disminuye, por lo que un valor moderado (0.15) mantiene la regularización sin afectar la retención de características relevantes.
+
+🔹 5. Clasificador final
 
 - Antes (Ensayo 1):
 
@@ -50,21 +65,14 @@ Este escalado progresivo permite una mejor jerarquía de representación visual 
   self.fc = nn.Linear(64, num_classes)
 
 Justificación:
-El nuevo clasificador con GAP:
-- Reduce enormemente los parámetros entrenables.
-- Aumenta la regularización implícita.
-- Hace que la red dependa más de las activaciones convolucionales que de las capas densas, mejorando la generalización.
+El nuevo clasificador reduce enormemente el número de parámetros y prioriza la información proveniente de las capas convolucionales, lo que mejora la generalización y la estabilidad de la validación.
 
-🔹 4. Optimizador
+🔹 6. Optimizador
 
 - Antes: optim.Adam(lr=0.001, weight_decay=1e-4)
 
 - Ahora: optim.AdamW(lr=0.002, weight_decay=1e-4)
 
 Justificación:
-AdamW mejora el control de la regularización al separar el weight decay del gradiente. Esto evita un mal ajuste del peso y suele ofrecer:
-- Entrenamientos más estables
-- Mejor desempeño en validación
-- Convergencia más predecible en redes con BatchNorm
-
-
+AdamW separa correctamente la penalización por pesos del cálculo del gradiente, lo que produce un entrenamiento más estable y mejor control de regularización.
+Esto es especialmente útil en redes con BatchNorm y Mish, que tienden a generar gradientes más suaves.
