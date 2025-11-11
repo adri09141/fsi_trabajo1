@@ -23,7 +23,7 @@ class SimpleCNN(nn.Module):
         self.bn4 = nn.BatchNorm2d(64)
         # 🔹 Clasificador
         self.gap = nn.AdaptiveAvgPool2d((1, 1))
-        self.dropout = nn.Dropout(0.15) 
+        self.dropout = nn.Dropout(0.3) 
         # Una sola capa lineal de 64 (de conv4) a las clases
         self.fc = nn.Linear(64, num_classes)
         # ----------------------------------------------------
