@@ -77,4 +77,3 @@ if __name__ == '__main__':
     print(f"Total imágenes de test: {len(test_dataset)}")
     print(f"Número de clases: {num_classes}")
     print(f"Nombres de clases: {class_names}")
-    print(f"Usando {total_cpus} CPUs para cargar datos.")
