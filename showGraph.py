@@ -23,7 +23,7 @@ def plot_training_history(history):
     # Lista con los números de época
     epochs = range(1, len(history['train_loss']) + 1)
 
-    # Definir el tamaño de la figura(10x4")    plt.figure(figsize=(10, 4))
+    # Definir el tamaño de la figura(10x4")
     plt.figure(figsize=(10, 4))
 
     # ===========================
