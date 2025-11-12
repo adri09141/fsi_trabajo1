@@ -55,4 +55,6 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
 
 if __name__ == '__main__':
-    print(f"\n Modelo CNN (Ultra-Ligero 16-32-32-64) con {num_classes} clases.")
+    print(f"\n🧪 Modelo Ensayo 2 – Modelo CNN (4 bloques: 16-32-32-64)")
+    print(f"📊 Número de clases: {num_classes}")
+    print(f"🔧 Optimizador: AdamW | LR: 0.001 | Dropout: 0.3")
