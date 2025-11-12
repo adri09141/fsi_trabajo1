@@ -146,7 +146,6 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         if scheduler.num_bad_epochs > 0:
             count_bad_epochs += 1
 
-    print('--- Entrenamiento finalizado ---')
     total_time = time.time() - total_start_time
     avg_epoch_time = sum(epoch_times) / len(epoch_times)
     total_mins, total_secs = divmod(total_time, 60)
