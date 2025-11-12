@@ -54,6 +54,10 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         'dev_acc': [],
     }
 
+    count_bad_epochs = 0
+    best_acc_train, epoch_best_acc_train = 0.0, 0
+    best_acc_val, epoch_best_acc_val = 0.0, 0
+    
     num_classes = n_classes()  # Obtenemos la cantidad de clases
     epoch_times = []
     total_start_time = time.time()
@@ -132,6 +136,16 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         print(f"Learning rate actual: {current_lr:.6f}")
         print(f"Épocas sin mejora (num_bad_epochs): {scheduler.num_bad_epochs}\n")
 
+        # Actualizamos los mejores accuracies si es necesario
+        if train_acc > best_acc_train:
+            best_acc_train = train_acc
+            epoch_best_acc_train = epoch + 1
+        if dev_acc > best_acc_val:
+            best_acc_val = dev_acc
+            epoch_best_acc_val = epoch + 1
+        if scheduler.num_bad_epochs > 0:
+            count_bad_epochs += 1
+
     print('--- Entrenamiento finalizado ---')
     total_time = time.time() - total_start_time
     avg_epoch_time = sum(epoch_times) / len(epoch_times)
@@ -141,6 +155,10 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
     print("\n--- Entrenamiento finalizado ---")
     print(f"Tiempo total de entrenamiento : {int(total_mins)}m {int(total_secs)}s")
     print(f"Tiempo promedio por época     : {int(avg_mins)}m {int(avg_secs)}s")
+    print(f"Mejor Exactitud en Entrenamiento : {best_acc_train:.2f} en la epoca {epoch_best_acc_train}")
+    print(f"Mejor Exactitud en Validación     : {best_acc_val:.2f}% en la epoca {epoch_best_acc_val}")
+    print(f"Número de épocas sin mejora     : {count_bad_epochs}")
+    print("-----------------------------------\n")
 
     return model, history
 
