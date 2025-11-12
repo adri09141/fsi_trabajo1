@@ -2,12 +2,11 @@ import random
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Subset
-import os
 # --- Parámetros ---
 train_dir = "asl_alphabet_train"
 test_dir = "asl_alphabet_test"
 batch_size = 128
-img_size = (128, 128)
+img_size = (96, 96)
 val_split = 0.25
 seed = 42
 
@@ -17,14 +16,9 @@ torch.manual_seed(seed)
 # --- Transforms ---
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
-    transforms.RandomCrop(img_size, padding=8),  # más barato que RandomResizedCrop
+    transforms.RandomCrop(img_size, padding=4),  # más barato que RandomResizedCrop
     transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomRotation(10),               # reemplaza RandomAffine
-    transforms.ColorJitter(
-        brightness=0.1,
-        contrast=0.1,
-        saturation=0.05
-    ),
+    transforms.RandomRotation(5),               # reemplaza RandomAffine
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
