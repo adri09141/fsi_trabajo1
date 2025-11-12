@@ -140,14 +140,3 @@ Ventajas:
 - Menor riesgo de sobreajuste, al reducir el volumen de píxeles redundantes.
 - Mejor compatibilidad con redes más ligeras, manteniendo una representación suficiente para distinguir gestos similares (como “M” vs “N”).
 
-🔹 8. num_epochs_to_train 
-
-- Antes (Ensayo 1): 20
-
-- Ahora (Ensayo 2): 40
-
-Justificación:
-El incremento de 20 → 40 épocas responde a la necesidad de dar tiempo al modelo a estabilizarse tras los cambios estructurales (BatchNorm + Mish + AdamW).
-El nuevo diseño converge más suavemente, lo que requiere más ciclos de optimización para alcanzar su rendimiento máximo sin saturarse prematuramente.
-
-
