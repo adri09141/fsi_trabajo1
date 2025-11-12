@@ -1,4 +1,4 @@
-🧪 Comparativa principal entre Ensayo 1 y Ensayo 3
+🧪 Comparativa principal entre Ensayo 1 y Ensayo 
 
 En este tercer ensayo se realizaron ajustes estructurales, funcionales y de activación con el objetivo de ligerizar el modelo, mejorar la estabilidad del aprendizaje y mantener la capacidad de representación necesaria para la detección precisa de letras en lenguaje de signos.
 
@@ -7,7 +7,7 @@ En este tercer ensayo se realizaron ajustes estructurales, funcionales y de acti
 - Antes (Ensayo 1):
   Red convolucional con tres bloques Conv–BatchNorm–ReLU–Pool y un clasificador totalmente conectado con tres capas densas (fc1, fc2, fc3).
 
-- Ahora (Ensayo 3):
+- Ahora (Ensayo 2):
   Se amplió la parte convolucional a cuatro bloques (16 → 32 → 32 → 64) para una extracción de características más jerárquica, y se eliminó el clasificador denso en   favor de una etapa de Global Average Pooling (GAP) seguida de una sola capa lineal.
 
 Justificación:
@@ -33,7 +33,7 @@ La repetición de dos bloques con 32 canales estabiliza el flujo de gradiente y 
 
 - Antes (Ensayo 1): nn.ReLU()
 
-- Ahora (Ensayo 3): nn.Mish()
+- Ahora (Ensayo 2): nn.Mish()
 
 Justificación:
 Mish es una activación más suave y continua que ReLU, definida como x * tanh(softplus(x)).
@@ -59,7 +59,7 @@ Con menos capas densas, el riesgo de sobreajuste disminuye, por lo que un valor 
   self.bn_fc2 = nn.BatchNorm1d(256)
   self.fc3 = nn.Linear(256, num_classes)
 
-- Ahora (Ensayo 3):
+- Ahora (Ensayo 2):
 
   self.gap = nn.AdaptiveAvgPool2d((1, 1))
   self.fc = nn.Linear(64, num_classes)
@@ -74,5 +74,80 @@ El nuevo clasificador reduce enormemente el número de parámetros y prioriza la
 - Ahora: optim.AdamW(lr=0.002, weight_decay=1e-4)
 
 Justificación:
+
 AdamW separa correctamente la penalización por pesos del cálculo del gradiente, lo que produce un entrenamiento más estable y mejor control de regularización.
 Esto es especialmente útil en redes con BatchNorm y Mish, que tienden a generar gradientes más suaves.
+
+🔹 6. Train_transform
+
+- Antes (Ensayo 1):
+
+  train_transform = transforms.Compose([
+      transforms.Resize(img_size),
+      transforms.RandomCrop(img_size, padding=8),  # más barato que RandomResizedCrop
+      transforms.RandomHorizontalFlip(p=0.5),
+      transforms.RandomRotation(10),               # reemplaza RandomAffine
+      transforms.ColorJitter(
+          brightness=0.1,
+          contrast=0.1,
+          saturation=0.05
+      ),
+      transforms.ToTensor(),
+      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+  ])
+
+- Ahora (Ensayo 2):
+
+  train_transform = transforms.Compose([
+      transforms.Resize(img_size),
+      transforms.RandomCrop(img_size, padding=4),
+      transforms.RandomHorizontalFlip(p=0.5),
+      transforms.RandomRotation(5),
+      transforms.ToTensor(),
+      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+  ])
+
+Justificación:
+
+El nuevo esquema de data augmentation busca un equilibrio entre diversidad y consistencia visual, reduciendo el grado de aleatoriedad aplicado a las imágenes para evitar que el modelo aprenda patrones deformados o irreales de las manos.
+Los cambios principales y su impacto:
+  🔸 Reducción de padding en el recorte (8 → 4):
+  Menor desplazamiento aleatorio del contenido visual. Favorece que las manos se mantengan centradas, lo que ayuda a conservar las proporciones naturales del gesto.
+
+  🔸 Rotación más leve (10° → 5°):
+  Mejora la estabilidad de la convergencia. En lenguaje de signos, las rotaciones excesivas pueden alterar completamente el significado del gesto.
+
+  🔸 Eliminación de ColorJitter:
+  Aunque útil para iluminación variable, su eliminación evita introducir ruido cromático innecesario, ya que las condiciones de captura en el dataset son       relativamente homogéneas.
+  
+  🔸 Normalización constante:
+  Mantener los valores centrados en torno a cero mejora la estabilidad de las activaciones, especialmente con BatchNorm y Mish.
+
+En conjunto, el nuevo train_transform genera un aprendizaje más robusto y consistente, reduciendo la variabilidad espuria mientras conserva la capacidad de generalización.
+
+🔹 7. img_size 
+
+- Antes (Ensayo 1): (128, 128)
+
+- Ahora (Ensayo 2): (96, 96)
+
+Justificación:
+Reducir la resolución a 96×96 píxeles optimiza el equilibrio entre detalle visual y coste computacional.
+Las letras del lenguaje de signos presentan formas bien definidas que pueden capturarse adecuadamente a esta resolución sin pérdida significativa de información discriminante.
+
+Ventajas:
+- Entrenamiento más rápido y eficiente, permitiendo mayor número de épocas sin sobrecargar GPU.
+- Menor riesgo de sobreajuste, al reducir el volumen de píxeles redundantes.
+- Mejor compatibilidad con redes más ligeras, manteniendo una representación suficiente para distinguir gestos similares (como “M” vs “N”).
+
+🔹 8. num_epochs_to_train 
+
+- Antes (Ensayo 1): 20
+
+- Ahora (Ensayo 2): 40
+
+Justificación:
+El incremento de 20 → 40 épocas responde a la necesidad de dar tiempo al modelo a estabilizarse tras los cambios estructurales (BatchNorm + Mish + AdamW).
+El nuevo diseño converge más suavemente, lo que requiere más ciclos de optimización para alcanzar su rendimiento máximo sin saturarse prematuramente.
+
+
