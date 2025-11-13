@@ -17,7 +17,7 @@ if __name__ == "__main__":
     model.classifier[1] = nn.Linear(model.classifier[1].in_features, num_classes)
 
     # --- Cargar pesos entrenados ---
-    state_dict = torch.load("asl_efficientnet_final.pth", map_location=device)
+    state_dict = torch.load("asl_cnn_final.pth", map_location=device)
     model.load_state_dict(state_dict)
     model.to(device)
     model.eval()
