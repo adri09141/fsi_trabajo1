@@ -29,6 +29,8 @@ class SimpleCNN(nn.Module):
         self.conv3 = nn.LazyConv2d(out_channels=64, kernel_size=3, padding=1)
         self.bn3 = nn.BatchNorm2d(64)
 
+        self.drop_conv = nn.Dropout2d(0.1)
+
         # 🔹 Capa totalmente conectada (clasificación)
         # Aplanamos: [B, 64, 8, 8] → [B, 64*16*16 = 16384]
         self.fc1 = nn.LazyLinear(out_features=1024)
@@ -49,12 +51,13 @@ class SimpleCNN(nn.Module):
         x = self.bn2(x)
         x = self.relu(x)
         x = self.pool(x)               # [B, 32, 32, 32]
-
+        x = self.drop_conv(x)
         # ---- Capa 3 ----
         x = self.conv3(x)              # [B, 32, 32, 32] → [B, 64, 32, 32]
         x = self.bn3(x)
         x = self.relu(x)
         x = self.pool(x)               # [B, 64, 16, 16]
+        x = self.drop_conv(x)
 
         # ---- Clasificador ----
         x = torch.flatten(x, 1)        # [B, 64, 16, 16] → [B, 4096]
