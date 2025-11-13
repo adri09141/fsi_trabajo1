@@ -12,17 +12,9 @@ seed = 42
 
 random.seed(seed)
 torch.manual_seed(seed)
-
-# --- Transforms ---
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
-    transforms.RandomResizedCrop(img_size, scale=(0.8, 1.0)),
-    transforms.RandomRotation(10),
     transforms.RandomHorizontalFlip(p=0.5),
-    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
-    transforms.RandomGrayscale(p=0.1),
-    transforms.RandomAffine(degrees=10, translate=(0.1,0.1), scale=(0.9,1.1)),
-    transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0)),
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
