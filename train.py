@@ -180,9 +180,7 @@ if __name__ == '__main__':
 
     # Graficamos la evolución de pérdida y accuracy
     plot_training_history(training_history)
-
-    # Importante: esto guarda el modelo tal como terminó.
-    # Si querés guardar el "mejor" modelo (por validación), habría que agregar early stopping.
+    
     print("Guardando el modelo entrenado...")
     torch.save(trained_model.state_dict(), 'asl_cnn_final.pth')
     print("Modelo guardado en 'asl_cnn_final.pth'")
