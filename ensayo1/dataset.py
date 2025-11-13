@@ -17,9 +17,9 @@ torch.manual_seed(seed)
 # --- Transforms ---
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
-    transforms.RandomCrop(img_size, padding=8),  # más barato que RandomResizedCrop
+    transforms.RandomCrop(img_size, padding=8),
     transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomRotation(15),               # reemplaza RandomAffine
+    transforms.RandomRotation(15),
     transforms.ColorJitter(
         brightness=0.1,
         contrast=0.1,
