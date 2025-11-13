@@ -40,7 +40,7 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         optimizer,
         mode='min',       # Queremos minimizar la pérdida
         factor=0.5,       # Reduce el LR a la mitad
-        patience=2       # Espera 2 épocas sin mejora
+        patience=1       # Espera 2 épocas sin mejora
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Entrenando en dispositivo: {device}")
