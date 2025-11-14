@@ -3,7 +3,9 @@ import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Subset
 import os
-# --- Parámetros ---
+# ----------------------------
+# Parámetros generales
+# ----------------------------
 train_dir = "asl_alphabet_train"
 test_dir = "asl_alphabet_test"
 batch_size = 128
@@ -14,7 +16,11 @@ seed = 42
 random.seed(seed)
 torch.manual_seed(seed)
 
-# --- Transforms ---
+# ----------------------------
+# Transformaciones de imagen
+# ----------------------------
+
+# Aumentos para entrenamiento
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
     transforms.RandomCrop(img_size, padding=8),  # más barato que RandomResizedCrop
@@ -30,8 +36,7 @@ train_transform = transforms.Compose([
                      std=[0.229, 0.224, 0.225])
 ])
 
-
-
+# Validación y test → sin aumentos
 val_transform = transforms.Compose([
     transforms.Resize(img_size),
     transforms.ToTensor(),
@@ -48,34 +53,47 @@ test_transform = transforms.Compose([
 
 ])
 
-# --- Cargar datasets base ---
+# ----------------------------
+# Cargar datasets
+# ----------------------------
 train_base_dataset = datasets.ImageFolder(root=train_dir, transform=train_transform)
 val_base_dataset = datasets.ImageFolder(root=train_dir, transform=val_transform)
 test_dataset = datasets.ImageFolder(root=test_dir, transform=test_transform)
 
+# Guardar nombres de clases
 base_info = val_base_dataset
 class_names = base_info.classes
 
-# --- Split entrenamiento/validación ---
+# ----------------------------
+# División entrenamiento / validación
+# ----------------------------
 indices = list(range(len(base_info)))
 random.shuffle(indices)
 n_val = int(len(indices) * val_split)
+
 val_indices = indices[:n_val]
 train_indices = indices[n_val:]
 
+# Subsets de PyTorch
 train_dataset = Subset(train_base_dataset, train_indices)
 val_dataset = Subset(val_base_dataset, val_indices)
 
-total_cpus = os.cpu_count()
-# --- DataLoaders ---
+# ----------------------------
+# DataLoaders
+# ----------------------------
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
-# --- Información ---
+# ----------------------------
+# Obtener número de clases
+# ----------------------------
 def n_classes():
     return len(base_info.classes)
 
+# ----------------------------
+# Información del dataset
+# ----------------------------
 if __name__ == '__main__':
     num_classes = n_classes()
     print(f"Total imágenes de entrenamiento: {len(train_dataset)}")
