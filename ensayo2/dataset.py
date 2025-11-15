@@ -60,8 +60,8 @@ class_names = base_info.classes
 indices = list(range(len(base_info)))
 random.shuffle(indices)
 
-n_val = int(len(indices) * val_split)   # ej. 20%
-n_test = int(len(indices) * test_split) # ej. 10%
+n_val = int(len(indices) * val_split)   
+n_test = int(len(indices) * test_split) 
 
 val_indices = indices[:n_val]
 test_indices = indices[n_val : n_val + n_test]
