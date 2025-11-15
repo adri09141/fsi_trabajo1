@@ -49,3 +49,14 @@ Justificación:
 Adam combina las ventajas de AdaGrad y RMSProp, ajustando dinámicamente la tasa de aprendizaje por parámetro.
 Es un optimizador eficiente y ampliamente utilizado en redes profundas debido a su rápida convergencia y estabilidad.
 El parámetro weight_decay introduce una ligera regularización L2 para prevenir sobreajuste.
+
+🔹 5. Regularización
+
+- Usado: nn.Dropout2d(0.1)
+
+Justificación:
+El uso del dropout2d + dropout ya que: 
+- Dropout2d apaga canales completos (feature maps) en una capa convolucional.
+- Mientras que Dropout “normal” apaga neuronas individuales aleatoriamente.
+
+Esto nos permite reducir el sobreajuste y mejorar la generalización del modelo.
