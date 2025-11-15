@@ -1,6 +1,6 @@
 🧪 Comparativa principal entre Ensayo 1 y Ensayo 
 
-En este tercer ensayo se realizaron ajustes estructurales, funcionales y de activación con el objetivo de ligerizar el modelo, mejorar la estabilidad del aprendizaje y mantener la capacidad de representación necesaria para la detección precisa de letras en lenguaje de signos.
+En este segundo ensayo se realizaron ajustes estructurales, funcionales y de activación con el objetivo de ligerizar el modelo, mejorar la estabilidad del aprendizaje y mantener la capacidad de representación necesaria para la detección precisa de letras en lenguaje de signos.
 
 🔹 1. Arquitectura general
 
