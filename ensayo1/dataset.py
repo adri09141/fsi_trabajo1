@@ -66,8 +66,8 @@ class_names = base_info.classes
 indices = list(range(len(base_info)))
 random.shuffle(indices)
 
-n_val = int(len(indices) * val_split)   # ej. 20%
-n_test = int(len(indices) * test_split) # ej. 10%
+n_val = int(len(indices) * val_split)  
+n_test = int(len(indices) * test_split) 
 
 
 val_indices = indices[:n_val]
@@ -80,9 +80,9 @@ train_dataset = Subset(train_base_dataset, train_indices)
 val_dataset = Subset(val_base_dataset, val_indices) 
 test_dataset = Subset(val_base_dataset, test_indices)
 
-# ----------------------------
+# --------------
 # DataLoaders
-# ----------------------------
+# --------------
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
@@ -101,6 +101,6 @@ if __name__ == '__main__':
     num_classes = n_classes()
     print(f"Total imágenes de entrenamiento: {len(train_dataset)}")
     print(f"Total imágenes de validación: {len(val_dataset)}")
-    print(f"Total imágenes de test (del set de train): {len(test_dataset)}") # <-- Cambiado
+    print(f"Total imágenes de test (del set de train): {len(test_dataset)}") 
     print(f"Número de clases: {num_classes}")
     print(f"Nombres de clases: {class_names}")
