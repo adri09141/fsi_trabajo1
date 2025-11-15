@@ -1,3 +1,22 @@
+"""
+Script para generar y visualizar la matriz de confusión de un modelo entrenado
+(SimpleCNN) aplicado al conjunto de validación del dataset de ASL.
+    
+    1. Detecta y selecciona automáticamente el dispositivo de ejecución 
+       (GPU si está disponible, de lo contrario CPU).
+    2. Carga el modelo previamente entrenado desde 'asl_cnn_final.pth' y lo
+       configura en modo evaluación.
+    3. Obtiene los nombres de las clases directamente desde la estructura del
+       dataset de validación.
+    4. Recorre todo el conjunto de validación para obtener:
+         - Etiquetas verdaderas
+         - Predicciones del modelo
+       ·Usando torch.no_grad() para evitar el cálculo de gradientes y acelerar la inferencia.
+    5. Construye la matriz de confusión 
+    6. Muestra la matriz mediante un mapa de calor usando seaborn, facilitando 
+       la visualización de qué clases se confunden más entre sí.
+"""
+
 from dataset import val_loader, n_classes
 from model import SimpleCNN
 import torch
