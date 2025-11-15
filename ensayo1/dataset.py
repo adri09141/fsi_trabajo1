@@ -69,11 +69,9 @@ random.shuffle(indices)
 n_val = int(len(indices) * val_split)  
 n_test = int(len(indices) * test_split) 
 
-
 val_indices = indices[:n_val]
 test_indices = indices[n_val : n_val + n_test]
 train_indices = indices[n_val + n_test :]
-
 
 # Subsets de PyTorch
 train_dataset = Subset(train_base_dataset, train_indices)
