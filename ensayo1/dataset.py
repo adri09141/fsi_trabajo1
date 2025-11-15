@@ -1,3 +1,10 @@
+"""
+Módulo de preparación de datos para el dataset ASL Alphabet.
+
+Requisitos:
+    torch, torchvision y una estructura de carpetas válida para ImageFolder.
+"""
+
 import random
 import torch
 from torchvision import datasets, transforms
@@ -35,7 +42,7 @@ train_transform = transforms.Compose([
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
 
-# Validación y test → sin aumentos
+# Validación y test - sin aumentos
 val_transform = transforms.Compose([
     transforms.Resize(img_size),
     transforms.ToTensor(),
@@ -53,9 +60,9 @@ val_base_dataset = datasets.ImageFolder(root=train_dir, transform=val_transform)
 base_info = val_base_dataset
 class_names = base_info.classes
 
-# ----------------------------
+# ---------------------------------------------
 # División entrenamiento / validación / test
-# ----------------------------
+# ---------------------------------------------
 indices = list(range(len(base_info)))
 random.shuffle(indices)
 
