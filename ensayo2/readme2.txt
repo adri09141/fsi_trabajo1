@@ -8,7 +8,7 @@ En este segundo ensayo se realizaron ajustes estructurales, funcionales y de act
   Red convolucional con tres bloques Conv–BatchNorm–ReLU–Pool y un clasificador totalmente conectado con tres capas densas (fc1, fc2, fc3).
 
 - Ahora (Ensayo 2):
-  Se amplió la parte convolucional a cuatro bloques (16 → 32 → 32 → 64) para una extracción de características más jerárquica, y se eliminó el clasificador denso en   favor de una etapa de Global Average Pooling (GAP) seguida de una sola capa lineal.
+  Se amplió la parte convolucional a cuatro bloques (16 → 32 → 32 → 64) para una extracción de características más jerárquica, y se eliminó el clasificador denso en favor de una etapa de Global Average Pooling (GAP) seguida de una sola capa lineal.
 
 Justificación:
 El uso de nn.AdaptiveAvgPool2d((1, 1)) permite condensar la información espacial sin necesidad de aplanar todo el tensor, reduciendo millones de parámetros y mejorando la eficiencia computacional.
@@ -78,7 +78,7 @@ Justificación:
 AdamW separa correctamente la penalización por pesos del cálculo del gradiente, lo que produce un entrenamiento más estable y mejor control de regularización.
 Esto es especialmente útil en redes con BatchNorm y Mish, que tienden a generar gradientes más suaves.
 
-🔹 6. Train_transform
+🔹 7. Train_transform
 
 - Antes (Ensayo 1):
 
@@ -125,7 +125,7 @@ Los cambios principales y su impacto:
 
 En conjunto, el nuevo train_transform genera un aprendizaje más robusto y consistente, reduciendo la variabilidad espuria mientras conserva la capacidad de generalización.
 
-🔹 7. img_size 
+🔹 8. img_size 
 
 - Antes (Ensayo 1): (128, 128)
 
