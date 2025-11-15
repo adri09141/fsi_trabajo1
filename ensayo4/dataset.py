@@ -1,3 +1,12 @@
+"""
+Módulo para la preparación del dataset ASL Alphabet con imágenes de 96x96.
+
+    - Se aplica un aumento mínimo durante el entrenamiento (flip horizontal,
+      crop ligero y rotación pequeña).
+
+Requisitos:
+    torch, torchvision y una estructura de carpetas válida para ImageFolder.
+"""
 
 import random
 import torch
@@ -31,7 +40,7 @@ train_transform = transforms.Compose([
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
 
-# Validación y test → sin aumentos
+# Validación y test - sin aumentos
 val_transform = transforms.Compose([
     transforms.Resize(img_size),
     transforms.ToTensor(),
@@ -49,30 +58,27 @@ val_base_dataset = datasets.ImageFolder(root=train_dir, transform=val_transform)
 base_info = val_base_dataset
 class_names = base_info.classes
 
-# ----------------------------
+# ---------------------------------------------
 # División entrenamiento / validación / test
-# ----------------------------
+# ---------------------------------------------
 indices = list(range(len(base_info)))
 random.shuffle(indices)
 
 n_val = int(len(indices) * val_split)   # ej. 20%
 n_test = int(len(indices) * test_split) # ej. 10%
 
-
 val_indices = indices[:n_val]
 test_indices = indices[n_val : n_val + n_test]
 train_indices = indices[n_val + n_test :]
-
 
 # Subsets de PyTorch
 train_dataset = Subset(train_base_dataset, train_indices)
 val_dataset = Subset(val_base_dataset, val_indices) 
 test_dataset = Subset(val_base_dataset, test_indices)
 
-# ----------------------------
+# --------------
 # DataLoaders
-# ----------------------------
-
+# --------------
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
