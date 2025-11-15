@@ -1,142 +1,108 @@
-🧪 Comparativa principal entre Ensayo 1 y Ensayo 
+🧪 Ensayo 2 – CNN ligera 4 bloques (16–32–32–64) con AdamW
 
-En este segundo ensayo se realizaron ajustes estructurales, funcionales y de activación con el objetivo de ligerizar el modelo, mejorar la estabilidad del aprendizaje y mantener la capacidad de representación necesaria para la detección precisa de letras en lenguaje de signos.
+En este segundo ensayo se realizó una reestructuración profunda de la arquitectura con el objetivo de ligerizar el modelo, mejorar la estabilidad del aprendizaje y conservar la capacidad de representación necesaria para reconocer letras del lenguaje de signos de forma robusta.
 
 🔹 1. Arquitectura general
 
-- Antes (Ensayo 1):
-  Red convolucional con tres bloques Conv–BatchNorm–ReLU–Pool y un clasificador totalmente conectado con tres capas densas (fc1, fc2, fc3).
+Se diseñó una red convolucional con 4 bloques de procesamiento:
 
-- Ahora (Ensayo 2):
-  Se amplió la parte convolucional a cuatro bloques (16 → 32 → 32 → 64) para una extracción de características más jerárquica, y se eliminó el clasificador denso en favor de una etapa de Global Average Pooling (GAP) seguida de una sola capa lineal.
+16 → 32 → 32 → 64
 
-Justificación:
-El uso de nn.AdaptiveAvgPool2d((1, 1)) permite condensar la información espacial sin necesidad de aplanar todo el tensor, reduciendo millones de parámetros y mejorando la eficiencia computacional.
-Esto hace que el modelo sea:
-- Más compacto y rápido de entrenar
-- Menos propenso al sobreajuste
-- Más generalizable en validación
+Cada bloque incluye:
+
+- Conv2d
+- BatchNorm2d
+- Activación Mish
+- MaxPool2d
+- Dropout2d moderado 
+
+Después del cuerpo convolucional se aplica:
+- Global Average Pooling (GAP)
+- Dropout
+- Una sola capa lineal (64 → num_classes)
+
+Esto elimina por completo los clasificadores densos grandes y hace que toda la capacidad provenga de las convoluciones.
+
+Beneficios:
+- Mucho menos parámetros totales
+- Mejor generalización
+- Entrenamiento más estable
+- Menor riesgo de sobreajuste
 
 🔹 2. Capacidad convolucional
 
-- Antes:
-  Tres capas convolucionales (16 → 32 → 64) seguidas de capas densas con más de 1 millón de parámetros.
+El uso de 4 bloques con un patrón progresivo
+  16 → 32 → 32 → 64
+permite extraer características visuales más profundas sin volver el modelo pesado.
 
-- Ahora:
-  Cuatro capas convolucionales (16 → 32 → 32 → 64), todas normalizadas con BatchNorm2d y activadas con Mish.
+El bloque doble de 32 canales mejora:
 
-Beneficio:
-Este patrón progresivo permite extraer características visuales más ricas sin recurrir a capas densas costosas.
-La repetición de dos bloques con 32 canales estabiliza el flujo de gradiente y mejora la sensibilidad a variaciones sutiles en las formas de las manos.
+- estabilidad del gradiente
+- sensibilidad a detalles finos en la mano
+- precisión en gestos complejos
 
-🔹 3. Función de activación
+🔹 3. Función de activación: Mish
 
-- Antes (Ensayo 1): nn.ReLU()
+Se reemplazó ReLU por Mish, una activación suave y continua que:
 
-- Ahora (Ensayo 2): nn.Mish()
-
-Justificación:
-Mish es una activación más suave y continua que ReLU, definida como x * tanh(softplus(x)).
-Proporciona una mejor propagación de gradientes en valores negativos, facilitando una convergencia más estable y mejor precisión final, especialmente en tareas visuales complejas como la interpretación de gestos o letras manuales.
+- conserva información en valores negativos
+- mejora la propagación del gradiente
+- ayuda a modelos pequeños/medianos a converger mejor
+- produce representaciones más ricas para visión
 
 🔹 4. Regularización
 
-- Antes: nn.Dropout(0.3)
+El Ensayo 2 combina dos formas de regularización:
+- Dropout2d(0.1) en convoluciones
+- Dropout(0.3) en la capa final
 
-- Ahora: nn.Dropout(0.15)
+Esto estabiliza el entrenamiento sin inhibir la capacidad de representación.
 
-Justificación:
-La reducción del dropout rate es coherente con la simplificación del modelo.
-Con menos capas densas, el riesgo de sobreajuste disminuye, por lo que un valor moderado (0.15) mantiene la regularización sin afectar la retención de características relevantes.
+🔹 5. Clasificador final (GAP + Linear)
 
-🔹 5. Clasificador final
-
-- Antes (Ensayo 1):
-
-  self.fc1 = nn.LazyLinear(1024)
-  self.bn_fc1 = nn.BatchNorm1d(1024)
-  self.fc2 = nn.Linear(1024, 256)
-  self.bn_fc2 = nn.BatchNorm1d(256)
-  self.fc3 = nn.Linear(256, num_classes)
-
-- Ahora (Ensayo 2):
-
-  self.gap = nn.AdaptiveAvgPool2d((1, 1))
-  self.fc = nn.Linear(64, num_classes)
-
-Justificación:
-El nuevo clasificador reduce enormemente el número de parámetros y prioriza la información proveniente de las capas convolucionales, lo que mejora la generalización y la estabilidad de la validación.
-
-🔹 6. Optimizador
-
-- Antes: optim.Adam(lr=0.001, weight_decay=1e-4)
-
-- Ahora: optim.AdamW(lr=0.002, weight_decay=1e-4)
-
-Justificación:
-
-AdamW separa correctamente la penalización por pesos del cálculo del gradiente, lo que produce un entrenamiento más estable y mejor control de regularización.
-Esto es especialmente útil en redes con BatchNorm y Mish, que tienden a generar gradientes más suaves.
-
-🔹 7. Train_transform
-
-- Antes (Ensayo 1):
-
-  train_transform = transforms.Compose([
-      transforms.Resize(img_size),
-      transforms.RandomCrop(img_size, padding=8),  # más barato que RandomResizedCrop
-      transforms.RandomHorizontalFlip(p=0.5),
-      transforms.RandomRotation(10),               # reemplaza RandomAffine
-      transforms.ColorJitter(
-          brightness=0.1,
-          contrast=0.1,
-          saturation=0.05
-      ),
-      transforms.ToTensor(),
-      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-  ])
-
-- Ahora (Ensayo 2):
-
-  train_transform = transforms.Compose([
-      transforms.Resize(img_size),
-      transforms.RandomCrop(img_size, padding=4),
-      transforms.RandomHorizontalFlip(p=0.5),
-      transforms.RandomRotation(5),
-      transforms.ToTensor(),
-      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-  ])
-
-Justificación:
-
-El nuevo esquema de data augmentation busca un equilibrio entre diversidad y consistencia visual, reduciendo el grado de aleatoriedad aplicado a las imágenes para evitar que el modelo aprenda patrones deformados o irreales de las manos.
-Los cambios principales y su impacto:
-  🔸 Reducción de padding en el recorte (8 → 4):
-  Menor desplazamiento aleatorio del contenido visual. Favorece que las manos se mantengan centradas, lo que ayuda a conservar las proporciones naturales del gesto.
-
-  🔸 Rotación más leve (10° → 5°):
-  Mejora la estabilidad de la convergencia. En lenguaje de signos, las rotaciones excesivas pueden alterar completamente el significado del gesto.
-
-  🔸 Eliminación de ColorJitter:
-  Aunque útil para iluminación variable, su eliminación evita introducir ruido cromático innecesario, ya que las condiciones de captura en el dataset son       relativamente homogéneas.
-  
-  🔸 Normalización constante:
-  Mantener los valores centrados en torno a cero mejora la estabilidad de las activaciones, especialmente con BatchNorm y Mish.
-
-En conjunto, el nuevo train_transform genera un aprendizaje más robusto y consistente, reduciendo la variabilidad espuria mientras conserva la capacidad de generalización.
-
-🔹 8. img_size 
-
-- Antes (Ensayo 1): (128, 128)
-
-- Ahora (Ensayo 2): (96, 96)
-
-Justificación:
-Reducir la resolución a 96×96 píxeles optimiza el equilibrio entre detalle visual y coste computacional.
-Las letras del lenguaje de signos presentan formas bien definidas que pueden capturarse adecuadamente a esta resolución sin pérdida significativa de información discriminante.
+En lugar de múltiples capas densas, ahora se utiliza:
+  AdaptiveAvgPool2d((1,1))
+  Flatten
+  Linear(64 → num_classes)
 
 Ventajas:
-- Entrenamiento más rápido y eficiente, permitiendo mayor número de épocas sin sobrecargar GPU.
-- Menor riesgo de sobreajuste, al reducir el volumen de píxeles redundantes.
-- Mejor compatibilidad con redes más ligeras, manteniendo una representación suficiente para distinguir gestos similares (como “M” vs “N”).
+- reducción drástica de parámetros
+- mejor uso de la información convolucional
+- red más rápida y más robusta
 
+🔹 6. Optimizador: AdamW
+
+Se adoptó AdamW con:
+
+  lr = 0.001
+  weight_decay = 1e-4
+
+Beneficios:
+- separa la regularización del gradiente
+- mejora la estabilidad del entrenamiento
+- alcanza mejor generalización
+
+🔹 7. Transformaciones de entrenamiento
+
+Se ajustó el esquema de data augmentation para que sea suave pero efectivo:
+  
+  Resize(96×96)
+  RandomCrop(padding=4)
+  RandomHorizontalFlip(0.5)
+  RandomRotation(5°)
+  ToTensor()
+  Normalize(...)
+
+
+Cambios clave:
+- menor rotación (5°) para no deformar el gesto
+- menor padding (4) para mantener la mano centrada
+- se elimina ColorJitter para evitar ruido innecesario
+
+🔹 8. Tamaño de imagen: 96×96
+
+La resolución se redujo a 96×96, ofreciendo:
+- entrenamiento más rápido
+- menor memoria
+- suficiente detalle para distinguir gestos
+- menor tendencia al sobreajuste
