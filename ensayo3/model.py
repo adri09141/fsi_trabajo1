@@ -6,9 +6,9 @@ import torch.optim as optim
 
 num_classes = n_classes()
 
-class MiniCNN(nn.Module):
+class SimpleCNN(nn.Module):
     def __init__(self, num_classes):
-        super(MiniCNN, self).__init__()
+        super(SimpleCNN, self).__init__()
 
         self.act = nn.SiLU()
         self.pool = nn.MaxPool2d(2, 2)
@@ -40,7 +40,7 @@ class MiniCNN(nn.Module):
 
 
 # --- Entrenamiento ---
-model = MiniCNN(num_classes=num_classes)
+model = SimpleCNN(num_classes=num_classes)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.RMSprop(model.parameters(), lr=5e-4, alpha=0.99)
