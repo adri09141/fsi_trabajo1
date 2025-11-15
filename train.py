@@ -1,3 +1,21 @@
+"""
+Script de entrenamiento, validación y evaluación para un modelo CNN.
+
+Este archivo realiza las siguientes tareas:
+    - Entrena un modelo definido externamente usando batches del DataLoader.
+    - Evalúa el desempeño del modelo en un conjunto de validación en cada época.
+    - Ajusta automáticamente el learning rate mediante ReduceLROnPlateau.
+    - Registra métricas como pérdida y exactitud durante entrenamiento/validación.
+    - Identifica los mejores valores de accuracy para train y validación.
+    - Guarda el modelo final una vez terminado el entrenamiento.
+    - Evalúa el modelo entrenado en el conjunto de test.
+
+Requiere los módulos:
+    - dataset.py: contiene train_loader, val_loader, test_loader y n_classes()
+    - model.py: contiene model, criterion y optimizer ya configurados
+    - showGraph.py: contiene plot_training_history()
+"""
+
 import torch
 import torch.nn.functional as F
 # --- Importaciones desde tus otros archivos ---
@@ -6,15 +24,30 @@ from model import model, criterion, optimizer  # Traemos el modelo, la función 
 from showGraph import plot_training_history
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import time
-# -------------------------------------------------------------------
-# Función para evaluar el modelo en un conjunto de datos (por ejemplo, test o validación)
-# -------------------------------------------------------------------
+
+# =====================
+# Función: evaluate()
+# =====================
 def evaluate(model, test_loader):
+    """
+    Evalúa un modelo en un conjunto de datos (test o validación).
+
+    Recorre todos los batches del DataLoader, realiza inferencia sin 
+    cálculo de gradientes y obtiene la cantidad total de predicciones 
+    correctas para calcular el porcentaje de exactitud.
+
+    Args:
+        model (torch.nn.Module): Modelo a evaluar.
+        test_loader (torch.utils.data.DataLoader): DataLoader con el conjunto de datos.
+
+    Returns:
+        float: Accuracy expresada como porcentaje.
+    """
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.eval()  # Se pone el modelo en modo evaluación (desactiva dropout y batchnorm)
+    model.eval() 
     correct = 0
     total = 0
-    with torch.no_grad():  # No necesitamos calcular gradientes al evaluar
+    with torch.no_grad():  
         for inputs, labels in test_loader:
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
@@ -27,14 +60,32 @@ def evaluate(model, test_loader):
     return accuracy
 
 
-# -------------------------------------------------------------------
-# Función principal de entrenamiento con validación en cada época
-# -------------------------------------------------------------------
+# ==================================
+# Función: train_with_validation()
+# ==================================
 def train_with_validation(model, train_loader, dev_loader, criterion, optimizer, epochs=5):
     """
     Entrena el modelo durante 'epochs' épocas usando el conjunto de entrenamiento,
     y evalúa su desempeño en validación al final de cada una.
-    Devuelve el modelo entrenado y un registro de las métricas.
+
+    Args:
+        model (torch.nn.Module): Modelo que se entrenará.
+        train_loader (torch.utils.data.DataLoader): Datos de entrenamiento.
+        dev_loader (torch.utils.data.DataLoader): Datos de validación.
+        criterion (torch.nn.Module): Función de pérdida.
+        optimizer (torch.optim.Optimizer): Optimizador del modelo.
+        epochs (int): Cantidad total de épocas a entrenar.
+
+    Returns:
+        tuple:
+            model (torch.nn.Module): Modelo ya entrenado.
+            history (dict): Historial de métricas con formato:
+                {
+                    'train_loss': [...],
+                    'train_acc': [...],
+                    'dev_loss': [...],
+                    'dev_acc': [...]
+                }
     """
     scheduler = ReduceLROnPlateau(
         optimizer,
@@ -61,6 +112,8 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
     num_classes = n_classes()  # Obtenemos la cantidad de clases
     epoch_times = []
     total_start_time = time.time()
+
+    # ------------------ Bucle de entrenamiento ------------------
     for epoch in range(epochs):
         start_time = time.time()
         model.train()  # Modo entrenamiento
@@ -119,6 +172,8 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         history['train_acc'].append(train_acc)
         history['dev_loss'].append(avg_dev_loss)
         history['dev_acc'].append(dev_acc)
+
+        # Tiempo por época
         epoch_time = time.time() - start_time
         epoch_times.append(epoch_time)
         mins, secs = divmod(epoch_time, 60)
@@ -128,8 +183,9 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
         print(f'Pérdida Entrenamiento : {avg_train_loss:.4f} | Exactitud Entrenamiento : {train_acc:.2f}%')
         print(f'Pérdida Validación    : {avg_dev_loss:.4f} | Exactitud Validación    : {dev_acc:.2f}%\n')
         print(f'Tiempo por época      : {int(mins)}m {int(secs)}s%\n')
+
         scheduler.step(avg_dev_loss)
-        torch.cuda.empty_cache() # No se si es necesario aquí
+        torch.cuda.empty_cache() 
 
         # (Opcional) Mostrar el LR actual
         current_lr = optimizer.param_groups[0]['lr']
@@ -162,11 +218,11 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
     return model, history
 
 
-# -------------------------------------------------------------------
+# ======================================
 # Bloque principal — aquí arranca todo
-# -------------------------------------------------------------------
+# ======================================
 if __name__ == '__main__':
-    num_epochs_to_train = 20  # Definí cuántas épocas querés entrenar
+    num_epochs_to_train = 20  # Definir cuántas épocas quieres entrenar
     print(f'\n--- Iniciando entrenamiento por {num_epochs_to_train} épocas ---')
 
     trained_model, training_history = train_with_validation(
