@@ -1,62 +1,60 @@
-🧪 Ensayo 1 – Arquitectura base del modelo CNN
+Ensayo 1 – Descripción del modelo CNN
 
-En este primer ensayo se diseñó una arquitectura convolucional base enfocada en establecer una línea de referencia para los siguientes experimentos.
-El modelo combina capas convolucionales con normalización, activaciones ReLU y un bloque denso final para la clasificación.
+Este modelo utiliza una arquitectura CNN clásica compuesta por tres bloques convolucionales seguidos de un clasificador denso de tres capas. Es una red funcional pero con un número elevado de parámetros en la parte final, lo que la hace susceptible al sobreajuste.
 
-🔹 1. Estructura general de la red
+1. Arquitectura general
 
-La red se compone de tres bloques convolucionales seguidos de un bloque totalmente conectado (fully connected).
-Cada bloque convolucional aplica la siguiente secuencia:
+El modelo está formado por:
 
-  Convolución → Batch Normalization → ReLU → MaxPooling
+Bloques convolucionales:
+1. Conv2d -> BatchNorm -> ReLU -> MaxPool2d  
+   - 16 canales  
+   - Reduce a la mitad las dimensiones espaciales
 
-Esto permite:
-- Extraer características espaciales relevantes.
-- Normalizar la activación de cada lote, acelerando el entrenamiento.
-- Reducir progresivamente el tamaño espacial de las imágenes, concentrando la información.
-- El uso de nn.MaxPool2d(kernel_size=2, stride=2) reduce a la mitad las dimensiones después de cada convolución, facilitando un aprendizaje jerárquico de patrones.
+2. Conv2d -> BatchNorm -> ReLU -> MaxPool2d  
+   - 32 canales  
+   - Segunda reducción a la mitad
 
-🔹 2. Función de activación
+3. Conv2d -> BatchNorm -> ReLU -> MaxPool2d  
+   - 64 canales  
+   - Tercera reducción a la mitad
 
-- Usada: nn.ReLU()
+También se incluye Dropout2d(0.1) como regularización en estas capas.
 
-Justificación:
-ReLU (Rectified Linear Unit) es una función de activación ampliamente utilizada por su simplicidad y eficiencia.
-Presenta las siguientes ventajas:
-- Reduce el problema del gradiente desapareciente.
-- Acelera la convergencia.
-- Introduce no linealidad sin aumentar demasiado el costo computacional.
-Sin embargo, puede presentar el problema del “dying ReLU”, en el que ciertas neuronas dejan de activarse si sus pesos se saturan en valores negativos.
+2. Tamaño del tensor en cada etapa (entrada 128x128)
 
-🔹 3. Capa de clasificación (Fully Connected Block)
+Despues del primer bloque: 64x64  
+Despues del segundo bloque: 32x32  
+Despues del tercer bloque: 16x16
 
-El modelo original utiliza tres capas densas consecutivas con normalización por lotes y dropout, con la estructura:
-  fc1 → BatchNorm → ReLU → Dropout  
-  fc2 → BatchNorm → ReLU → Dropout  
-  fc3 → Clasificación final
+Antes del clasificador el tensor tiene forma [B, 64, 16, 16], equivalente a 16384 valores por muestra.
 
-Este bloque permite al modelo:
-- Combinar las características extraídas por las convoluciones.
-- Aprender relaciones no lineales entre los mapas de activación.
-- Realizar la predicción final para las num_classes categorías.
-- El uso de BatchNorm1d y Dropout(0.3) reduce el sobreajuste y estabiliza el aprendizaje, a costa de un mayor número de parámetros.
+3. Clasificador totalmente conectado
 
-🔹 4. Optimizador
+Despues de aplanar el tensor se pasa por:
 
-- Usado: optim.Adam(lr=0.001, weight_decay=1e-4)
+1. Capa linear de 16384 a 1024  
+   Incluye BatchNorm1d, ReLU y Dropout(0.3)
 
-Justificación:
-Adam combina las ventajas de AdaGrad y RMSProp, ajustando dinámicamente la tasa de aprendizaje por parámetro.
-Es un optimizador eficiente y ampliamente utilizado en redes profundas debido a su rápida convergencia y estabilidad.
-El parámetro weight_decay introduce una ligera regularización L2 para prevenir sobreajuste.
+2. Capa linear de 1024 a 256  
+   Incluye BatchNorm1d, ReLU y Dropout(0.3)
 
-🔹 5. Regularización
+3. Capa final de 256 a num_classes
 
-- Usado: nn.Dropout2d(0.1)
+Este bloque contiene la mayoría de los parámetros del modelo.
 
-Justificación:
-El uso del dropout2d + dropout ya que: 
-- Dropout2d apaga canales completos (feature maps) en una capa convolucional.
-- Mientras que Dropout “normal” apaga neuronas individuales aleatoriamente.
+4. Activación
 
-Esto nos permite reducir el sobreajuste y mejorar la generalización del modelo.
+La función de activación utilizada es ReLU en todas las capas.
+
+5. Regularización
+
+Se usa Dropout(0.3) en las capas densas y Dropout2d(0.1) en las convolucionales.
+
+6. Optimizador
+
+El entrenamiento se realiza con Adam, learning rate 0.001 y weight decay 1e-4.
+
+Resumen del Ensayo 1
+
+Es una CNN tradicional con tres bloques convolucionales (16, 32 y 64 canales), activaciones ReLU y un clasificador grande de tres capas. Es un modelo sencillo de implementar, potente, pero con un número alto de parámetros densos que pueden favorecer el sobreajuste.
