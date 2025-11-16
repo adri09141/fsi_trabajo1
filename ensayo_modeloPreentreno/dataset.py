@@ -1,3 +1,16 @@
+"""
+Módulo para la preparación del dataset ASL Alphabet con imágenes de 224x224.
+
+    - Se aplican aumentos de datos durante el entrenamiento:
+        · RandomCrop con padding
+        · RandomHorizontalFlip
+        · RandomRotation
+        · ColorJitter (brillo, contraste, saturación)
+        
+Requisitos:
+    torch, torchvision y una estructura de carpetas válida para ImageFolder.
+"""
+
 import random
 import torch
 from torchvision import datasets, transforms
@@ -20,7 +33,7 @@ torch.manual_seed(seed)
 # Transformaciones de imagen
 # ----------------------------
 
-# Aumentos para entrenamiento (¡Perfecto!)
+# Aumentos para entrenamiento
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
     transforms.RandomCrop(img_size, padding=8),
@@ -36,7 +49,7 @@ train_transform = transforms.Compose([
                          std=[0.229, 0.224, 0.225])
 ])
 
-# Validación y test → sin aumentos (¡Perfecto!)
+# Validación y test - sin aumentos
 val_transform = transforms.Compose([
     transforms.Resize(img_size),
     transforms.ToTensor(),
@@ -47,38 +60,34 @@ val_transform = transforms.Compose([
 # ----------------------------
 # Cargar datasets
 # ----------------------------
-# 1. Con augmentation (para train)
 train_base_dataset = datasets.ImageFolder(root=train_dir, transform=train_transform)
-# 2. Sin augmentation (para val y test)
 val_base_dataset = datasets.ImageFolder(root=train_dir, transform=val_transform) 
 
 # Guardar nombres de clases
 base_info = val_base_dataset
 class_names = base_info.classes
 
-# ----------------------------
-# División entrenamiento / validación / TEST (¡EL CAMBIO!)
-# ----------------------------
+# ---------------------------------------------
+# División entrenamiento / validación / test
+# ---------------------------------------------
 indices = list(range(len(base_info)))
 random.shuffle(indices)
 
-n_val = int(len(indices) * val_split)   # ej. 20%
-n_test = int(len(indices) * test_split) # ej. 10%
+n_val = int(len(indices) * val_split)  
+n_test = int(len(indices) * test_split) 
 
 val_indices = indices[:n_val]
 test_indices = indices[n_val : n_val + n_test]
 train_indices = indices[n_val + n_test :] 
-# ---------------------------------------------------------------------
 
 # Subsets de PyTorch
 train_dataset = Subset(train_base_dataset, train_indices) # Base CON augmentation
 val_dataset = Subset(val_base_dataset, val_indices)     # Base SIN augmentation
 test_dataset = Subset(val_base_dataset, test_indices)   # Base SIN augmentation
 
-# ----------------------------
+# --------------
 # DataLoaders
-# ----------------------------
-
+# --------------
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
