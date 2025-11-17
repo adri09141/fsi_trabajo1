@@ -8,3 +8,8 @@ Número de épocas sin mejora     : 6
 
 Evaluación - Total: 7800, Correctos: 7200
 Accuracy final en test: 92.31%
+
+Media Train Loss: 0.7466
+Media Dev Loss: 0.6510
+Media Train Accuracy: 75.44%
+Media Dev Accuracy: 79.12%
