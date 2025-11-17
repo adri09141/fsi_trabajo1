@@ -26,7 +26,7 @@ num_classes = n_classes()
 # --- Definición de una CNN simple y clara ---
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=num_classes):
-        super(SimpleCNN, self).__init__()´
+        super(SimpleCNN, self).__init__()
 
         self.relu = nn.ReLU()                    
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)  
