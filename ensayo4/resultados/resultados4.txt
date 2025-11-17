@@ -8,8 +8,3 @@ Número de épocas sin mejora     : 0
 
 Evaluación - Total: 8700, Correctos: 6097
 Accuracy final en test: 70.08%
-
-Mean Train Loss: 1.5336
-Mean Dev Loss: 1.3589
-Mean Train Accuracy: 49.14%
-Mean Dev Accuracy: 55.19%
