@@ -109,6 +109,8 @@ La pareja 3–4 no reporta cambios en este aspecto.
 
 🔹En la comparativa general: los Ensayos 1–2 dedican más atención al preprocesamiento como parte del diseño.
 
+------------------------------------------------------------------------------------------------
+
 ❖Conclusión general❖
 
 Los 4 ensayos reflejan dos líneas de investigación paralelas:
