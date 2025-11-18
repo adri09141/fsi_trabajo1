@@ -1,5 +1,6 @@
-✦Comparación General – Ensayos 1, 2, 3 y 4✦
-================================================
+                       ============================================
+                       ✦Comparación General – Ensayos 1, 2, 3 y 4✦
+                       ============================================
 
 ➤Evolución de arquitectura, capacidad, activación, regularización y filosofía de diseño
 
