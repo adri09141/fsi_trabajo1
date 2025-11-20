@@ -1,2 +1,0 @@
-Estos modelos ya estan entrenados y cuyo objetivos es por si quieres obtener algun detalle mas o reentrenarlos 
-Se me olvido decir que falta el primero por hacer jajaja
