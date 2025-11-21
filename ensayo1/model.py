@@ -1,3 +1,4 @@
+
 """
 Definición de una red neuronal convolucional simple para clasificación
 del dataset ASL Alphabet.
@@ -5,7 +6,7 @@ del dataset ASL Alphabet.
 Este módulo incluye:
 
 · La clase SimpleCNN, una arquitectura CNN compuesta por:
-   - Tres bloques de convolución con BatchNorm, ReLU y MaxPooling.
+   - Cuatro bloques de convolución con BatchNorm, ReLU y MaxPooling.
    - Capas fully connected para la clasificación final.
    - Dropout y Dropout2d para reducir sobreajuste.
    - Capas perezosas (LazyConv2d y LazyLinear) que infieren automáticamente
@@ -42,6 +43,9 @@ class SimpleCNN(nn.Module):
         self.conv3 = nn.LazyConv2d(out_channels=64, kernel_size=3, padding=1)
         self.bn3 = nn.BatchNorm2d(64)
 
+        self.conv4 = nn.LazyConv2d(out_channels=128, kernel_size=3, padding=1)
+        self.bn4 = nn.BatchNorm2d(128)
+
         self.drop_conv = nn.Dropout2d(0.1)
 
         # Capas fully-connected
@@ -59,7 +63,7 @@ class SimpleCNN(nn.Module):
         x = self.bn1(x)
         x = self.relu(x)
         x = self.pool(x)              
-
+        x = self.drop_conv(x)
         # ---- Capa 2 ----
         x = self.conv2(x)             
         x = self.bn2(x)
@@ -73,6 +77,14 @@ class SimpleCNN(nn.Module):
         x = self.relu(x)
         x = self.pool(x)              
         x = self.drop_conv(x)
+
+        # ---- Capa 3 ----
+        x = self.conv4(x)            
+        x = self.bn4(x)
+        x = self.relu(x)
+        x = self.pool(x)              
+        x = self.drop_conv(x)
+
 
         # ---- Clasificador ----
         x = torch.flatten(x, 1)        
