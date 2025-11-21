@@ -1,10 +1,10 @@
 --- Entrenamiento finalizado ---
-Tiempo total de entrenamiento : 23m 39s
-Tiempo promedio por época     : 1m 10s
-Mejor Exactitud en Entrenamiento : 96.06 en la epoca 20
-Mejor Exactitud en Validación     : 99.71% en la epoca 18
-Número de épocas sin mejora     : 5
+Tiempo total de entrenamiento : 31m 29s
+Tiempo promedio por época     : 1m 34s
+Mejor Exactitud en Entrenamiento : 97.97 en la epoca 20
+Mejor Exactitud en Validación     : 99.95% en la epoca 18
+Número de épocas sin mejora     : 6
 -----------------------------------
 
-Evaluación - Total: 8700, Correctos: 8657
-Accuracy final en test: 99.51%
+Evaluación - Total: 7800, Correctos: 7792
+Accuracy final en test: 99.90%
