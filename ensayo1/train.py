@@ -240,9 +240,8 @@ if __name__ == '__main__':
     
     print("Guardando el modelo entrenado...")
     torch.save(trained_model.state_dict(), 'asl_cnn_final.pth')
-    """
-    Si quisiera guardar algun modelo para retomar despues el entrenamiento o hacer algun calculo  descomenta esto :/
-    Se guarda con el nombre asl_cnn_checkpoint y si lo cambia debes cambiarlo en main..... :<
+    
+    # Esto es para guardar el modelo, para hacer métricas con sus resultados
     
     torch.save({
         'epoch': num_epochs_to_train,
@@ -250,7 +249,7 @@ if __name__ == '__main__':
         'optimizer_state_dict': optimizer.state_dict(),
         'history': training_history
     }, 'asl_cnn_checkpoint.pth')
-    """
+    
     print("Modelo guardado en 'asl_cnn_final.pth'")
 
     # Evaluamos en el conjunto de test para ver el rendimiento final
