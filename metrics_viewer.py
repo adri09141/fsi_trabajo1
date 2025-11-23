@@ -17,6 +17,7 @@ import numpy as np
 # Gráficas de loss y accuracy por separado
 # ====================================================
 def plot_history(history):
+
     epochs = range(1, len(history['train_loss']) + 1)
 
     plt.figure(figsize=(10,5))
@@ -84,7 +85,7 @@ def plot_line_means(means):
     for i, value in enumerate(means):
         plt.text(i, value + 0.01, f"{value:.2f}", ha='center', fontsize=12)
 
-    plt.title("Mean Metrics Comparison", fontsize=14)
+    plt.title("Mean Metrics Comparison (Line Plot)", fontsize=14)
     plt.ylabel("Value")
     plt.grid(True, linestyle='--', alpha=0.5)
     plt.tight_layout()
@@ -96,8 +97,13 @@ def plot_line_means(means):
 # =================
 if __name__ == '__main__':
 
-    checkpoint_path = 'asl_cnn_checkpoint.pth'
-    checkpoint = torch.load(checkpoint_path)
+    checkpoint_path = 'asl_cnn_checkpoint.pth' # Cambiar nombre para cada ensayo
+    
+    try:
+        checkpoint = torch.load(checkpoint_path, map_location='cpu')
+    except FileNotFoundError:
+        raise SystemExit(f"\nERROR: No se encontró el checkpoint: {checkpoint_path}\n")
+
     history = checkpoint['history']
 
     train_loss = history['train_loss']
