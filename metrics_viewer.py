@@ -85,7 +85,7 @@ def plot_line_means(means):
     for i, value in enumerate(means):
         plt.text(i, value + 0.01, f"{value:.2f}", ha='center', fontsize=12)
 
-    plt.title("Mean Metrics Comparison (Line Plot)", fontsize=14)
+    plt.title("Mean Metrics Comparison", fontsize=14)
     plt.ylabel("Value")
     plt.grid(True, linestyle='--', alpha=0.5)
     plt.tight_layout()
