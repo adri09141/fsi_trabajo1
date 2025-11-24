@@ -24,7 +24,7 @@ import torch.optim as optim
 num_classes = n_classes()
 
 # --- Definición de una CNN de 5 Capas minimalista ---
-class SimpleCNN_5Layer(nn.Module):
+class SimpleCNN(nn.Module):
     def __init__(self, num_classes):
         super(SimpleCNN_5Layer, self).__init__()
 
