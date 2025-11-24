@@ -1,13 +1,13 @@
-                                                    ============================================
-                                                          ✦Comparación General – Ensayos✦       
-                                                    ============================================
+                                          ============================================
+                                                ✦Comparación General – Ensayos✦       
+                                          ============================================
 
 ➤Este repositorio contiene varios ensayos de redes neuronales convolucionales para clasificar el alfabeto ASL. 
 ➤Cada ensayo incluye su propio modelo, configuración y resultados, permitiendo comparar cómo cambian el rendimiento y la estabilidad al modificar arquitectura, activación, regularización y optimizador.
 
 🟧Se muestra un resumen de los ensayos ordenados de mejor a peor rendimiento
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------
 
 💠Ensayo Preentrenado - EfficientNet-B0
 
