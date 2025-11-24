@@ -96,6 +96,6 @@ if __name__ == '__main__':
     num_classes = n_classes()
     print(f"Total imágenes de entrenamiento: {len(train_dataset)}")
     print(f"Total imágenes de validación: {len(val_dataset)}")
-    print(f"Total imágenes de test (del set de train): {len(test_dataset)}") # <-- Cambiado
+    print(f"Total imágenes de test (del set de train): {len(test_dataset)}")
     print(f"Número de clases: {num_classes}")
     print(f"Nombres de clases: {class_names}")
