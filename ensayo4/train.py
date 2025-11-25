@@ -22,7 +22,7 @@ import torch.nn.functional as F
 from dataset import train_loader, val_loader, n_classes, test_loader
 from model import model, criterion, optimizer  # Traemos el modelo, la función de pérdida y el optimizador ya definidos
 from showGraph import plot_training_history
-from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch.optim.lr_scheduler import LinearLR
 import time
 
 # =====================
@@ -87,7 +87,7 @@ def train_with_validation(model, train_loader, dev_loader, criterion, optimizer,
                     'dev_acc': [...]
                 }
     """
-    scheduler = CosineAnnealingLR(optimizer, T_max=epochs, eta_min=1e-6)
+    scheduler = LinearLR(optimizer, start_factor=1.0, end_factor=0.01, total_iters=epochs)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Entrenando en dispositivo: {device}")
     model.to(device)
@@ -237,7 +237,7 @@ if __name__ == '__main__':
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'history': training_history
-    }, 'asl_cnn_checkpointEnsayo4.pth')
+    }, 'asl_cnn_checkpointEnsayo3.pth')
     print("Modelo guardado en 'asl_cnn_final.pth'")
 
     # Evaluamos en el conjunto de test para ver el rendimiento final

@@ -1,8 +1,7 @@
 """
 Módulo para la preparación del dataset ASL Alphabet con imágenes de 96x96.
 
-    - Se aplica un aumento mínimo durante el entrenamiento (flip horizontal,
-      crop ligero y rotación pequeña).
+    - Se aplica un aumento mínimo durante el entrenamiento (flip horizontal).
 
 Requisitos:
     torch, torchvision y una estructura de carpetas válida para ImageFolder.
@@ -33,9 +32,7 @@ torch.manual_seed(seed)
 # Aumentos para entrenamiento
 train_transform = transforms.Compose([
     transforms.Resize(img_size),
-    transforms.RandomCrop(img_size, padding=4),
     transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomRotation(5),
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
@@ -64,8 +61,8 @@ class_names = base_info.classes
 indices = list(range(len(base_info)))
 random.shuffle(indices)
 
-n_val = int(len(indices) * val_split)   # ej. 20%
-n_test = int(len(indices) * test_split) # ej. 10%
+n_val = int(len(indices) * val_split)  
+n_test = int(len(indices) * test_split) 
 
 val_indices = indices[:n_val]
 test_indices = indices[n_val : n_val + n_test]

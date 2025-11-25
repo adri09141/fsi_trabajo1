@@ -18,11 +18,12 @@ Script para generar y visualizar la matriz de confusión de un modelo entrenado
 """
 
 from dataset import val_loader, n_classes
-from model import SimpleCNN
+from model import SimpleCNN_5Layer as SimpleCNN
 import torch
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
+
 
 if __name__ == "__main__":
     # Dispositivo de ejecución (GPU si está disponible)
