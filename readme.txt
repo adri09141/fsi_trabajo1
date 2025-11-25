@@ -5,11 +5,11 @@
 ➤Este repositorio contiene varios ensayos de redes neuronales convolucionales para clasificar el alfabeto ASL. 
 ➤Cada ensayo incluye su propio modelo, configuración y resultados, permitiendo comparar cómo cambian el rendimiento y la estabilidad al modificar arquitectura, activación, regularización y optimizador.
 
-🟧Se muestra un resumen de los ensayos ordenados de mejor a peor rendimiento
+💠Se muestra un resumen de los ensayos ordenados de mejor a peor rendimiento
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-💠Ensayo Preentrenado - EfficientNet-B0
+🚀Ensayo Preentrenado - EfficientNet-B0
 
 -Transfer learning desde ImageNet.
 -Solo se ajustan los últimos bloques(7 y 8).
@@ -19,7 +19,7 @@
 -Optimización con AdamW + CrossEntropyLoss.
 -Mayor precisión y capacidad de generalización obtenida.
 
-💠Ensayo 1 - Arquitectura Optimizada
+🏋️‍♂️Ensayo 1 - Arquitectura Optimizada
 
 -CNN progresiva 16→32→64→128.
 -LazyConv2D + BatchNorm + ReLU + MaxPooling.
@@ -29,7 +29,7 @@
 -Entrenamiento estable: Adam (wd=1e-4) + ReduceLROnPlateau.
 -Modelo final equilibrado y estable sin preentrenado.
 
-💠Ensayo 2 - CNN Ligera y Equilibrada
+⚡️Ensayo 2 - CNN Ligera y Equilibrada
 
 -Activación Mish para mejorar suavidad del gradiente.
 -Dropout2D (0.1) en los bloques y Dropout (0.3) en el clasificador.
@@ -38,7 +38,7 @@
 -Aumentos geométricos suaves (Crop, Flip, Rotación).
 -Rápida, eficiente y con muy buen rendimiento para su tamaño.
 
-💠Ensayo 3 - CNN Profunda y Estrecha
+📉Ensayo 3 - CNN Profunda y Estrecha
 
 -Activación GELU, ideal para redes profundas con canales reducidos.
 -Dropout (0.2) en el clasificador.
@@ -48,7 +48,7 @@
 -Usa CosineAnnealingLR para una reducción suave del LR.
 -Explora el límite inferior de capacidad con buena estabilidad; mejora respecto al Ensayo 4.
 
-💠Ensayo 4 — CNN Muy Simple 
+☠️Ensayo 4 — CNN Muy Simple 
 
 -Solo 2 bloques convolucionales: 32→64.
 -Activación SiLU, BatchNorm y MaxPool.
