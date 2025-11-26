@@ -42,7 +42,8 @@ model.classifier[1] = nn.Linear(in_features, num_classes)
 # Definir criterio y optimizador (solo para la capa final)
 # ---------------------------------------------------------
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.AdamW(model.classifier[1].parameters(), lr=1e-4)
+params_to_update = [p for p in model.parameters() if p.requires_grad]
+optimizer = optim.AdamW(params_to_update, lr=1e-4)
 
 if __name__ == '__main__':
     print(f"\nResNet50 preentrenado listo para entrenar con {num_classes} clases.")
