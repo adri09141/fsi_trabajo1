@@ -8,5 +8,6 @@ Número de épocas sin mejora     : 5
 
 Guardando el modelo entrenado...
 Modelo guardado en 'asl_cnn_final.pth'
+
 Evaluación - Total: 8700, Correctos: 8676
 Accuracy final en test: 99.72%
