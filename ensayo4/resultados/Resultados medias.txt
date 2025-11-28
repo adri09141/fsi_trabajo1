@@ -1,0 +1,5 @@
+===== MÉTRICAS PROMEDIO =====
+Mean Train Loss: 0.7298
+Mean Dev Loss:   0.6764
+Mean Train Acc:  76.22%
+Mean Dev Acc:    78.69%
