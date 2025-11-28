@@ -74,6 +74,6 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adamax(model.parameters(), lr=1e-3)
 
 if __name__ == "__main__":
-    print(f"\nModelo Ensayo 4 – CNN de 5 Capas (¡VERSIÓN MÍNIMA con Adamax!)")
+    print(f"\nModelo Ensayo 3 – CNN de 5 Capas (¡VERSIÓN MÍNIMA con Adamax!)")
     print(f"Número de clases: {num_classes}")
     print(f"Optimizador: Adamax | LR: 1e-3 | Dropout: 0.2")
