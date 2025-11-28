@@ -1,0 +1,13 @@
+--- Entrenamiento finalizado ---
+Tiempo total de entrenamiento : 16m 50s
+Tiempo promedio por época     : 0m 50s
+Mejor Exactitud en Entrenamiento : 64.67 en la epoca 20
+Mejor Exactitud en Validación     : 69.94% en la epoca 20
+Número de épocas sin mejora     : 0
+-----------------------------------
+
+Guardando el modelo entrenado...
+Modelo guardado en 'asl_cnn_final.pth'
+
+Evaluación - Total: 8700, Correctos: 6095
+Accuracy final en test: 70.06%
