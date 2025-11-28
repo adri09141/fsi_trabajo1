@@ -66,6 +66,6 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.RMSprop(model.parameters(), lr=5e-4, alpha=0.99)
 
 if __name__ == "__main__":
-    print(f"\nModelo Ensayo 3 – CNN Minimalista (2 bloques: 32-64)")
+    print(f"\nModelo Ensayo 4 – CNN Minimalista (2 bloques: 32-64)")
     print(f"Número de clases: {num_classes}")
     print(f"Optimizador: RMSprop | LR: 0.001 | Dropout: 0.3 | Label smoothing: 0.1")
