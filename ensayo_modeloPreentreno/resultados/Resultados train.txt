@@ -11,4 +11,4 @@ Modelo guardado en 'asl_cnn_final.pth'
 
 Evaluación - Total: 8700, Correctos: 8698
 Accuracy final en test: 99.98%
-PS C:\Users\Alba Ramos Quintana\D
+
