@@ -237,7 +237,7 @@ if __name__ == '__main__':
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'history': training_history
-    }, 'asl_cnn_checkpointEnsayo3.pth')
+    }, 'asl_cnn_checkpointEnsayo4.pth')
     print("Modelo guardado en 'asl_cnn_final.pth'")
 
     # Evaluamos en el conjunto de test para ver el rendimiento final
