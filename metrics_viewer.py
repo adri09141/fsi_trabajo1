@@ -97,10 +97,14 @@ def plot_line_means(means):
 # =================
 if __name__ == '__main__':
 
-    checkpoint_path = 'asl_cnn_checkpoint.pth' # Cambiar nombre para cada ensayo
+    # Cambiar nombre para cada ensayo
+
+    checkpoint_path = 'asl_cnn_checkpoint.pth' 
     #checkpoint_path = 'asl_cnn_checkpointEnsayo2.pth'
     #checkpoint_path = 'asl_cnn_checkpointEnsayo3.pth'
     #checkpoint_path = 'asl_cnn_checkpointEnsayo4.pth'
+    #checkpoint_path = 'asl_cnn_checkpointPreeEntrenado.pth'
+    
     
     try:
         checkpoint = torch.load(checkpoint_path, map_location='cpu')
